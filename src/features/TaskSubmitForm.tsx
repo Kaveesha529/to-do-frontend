@@ -7,11 +7,11 @@ import { useState } from "react";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 export default function TaskSubmitForm() {
-    const [date, setDate] = useState<string>("")
+    const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
     const [taskName, setTaskName] = useState<string>("")
     const [errorMessage, setErrorMessage] = useState<string | null>("")
 
-    const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         addTask(new Date(date), taskName)
     }
@@ -22,7 +22,6 @@ export default function TaskSubmitForm() {
                 date,
                 tasks: [{ name: taskName }]
             })
-            setDate("")
             setTaskName("")
         } catch (error) {
             console.error("Error saving task: ", error)
@@ -37,7 +36,7 @@ export default function TaskSubmitForm() {
                 <CardDescription>Fill below fields and click "Add" to add a task</CardDescription>
             </CardHeader>
             <CardContent>
-                <form>
+                <form id="taskSubmitForm" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="date">Date</Label>
@@ -78,7 +77,7 @@ export default function TaskSubmitForm() {
                 </form>
             </CardContent>
             <CardFooter>
-                <Button type="submit" className="w-full" onClick={handleSubmit}>Add</Button>
+                <Button type="submit" form="taskSubmitForm" className="w-full">Add</Button>
             </CardFooter>
         </Card>
     )
