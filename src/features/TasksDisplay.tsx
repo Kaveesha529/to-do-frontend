@@ -16,7 +16,6 @@ export default function TasksDisplay() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [toDoListId, setToDoListId] = useState<string>("")
     const [updatedTaskName, setUpdatedTaskName] = useState<string>("")
-    const [taskName, setTaskName] = useState<string>("")
 
     //for refresh icon to refresh list
     const handleRefresh = () => {
@@ -115,7 +114,7 @@ export default function TasksDisplay() {
                 date,
                 tasks: [{ name: taskName }]
             })
-            setTaskName("")
+            setUpdatedTaskName("")
             fetchToDoList()
         } catch (error) {
             console.error("Error saving task: ", error)
