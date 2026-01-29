@@ -1,7 +1,11 @@
 import TasksDisplay from "@/features/TasksDisplay";
 
-export default function ToDoListPage() {
+interface ToDoListPasgeProps {
+    isServerOnline: boolean
+}
+
+export default function ToDoListPage({ isServerOnline }: ToDoListPasgeProps) {
     return (
-        <TasksDisplay />
+        <TasksDisplay isServerOnline={isServerOnline} />
     )
 }

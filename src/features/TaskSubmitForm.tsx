@@ -9,11 +9,12 @@ interface TaskSubmitFormProps {
     addTask: (date: Date) => void
     onChange: (value: string) => void
     value: string
+    setFormErrorMessage: (formErrorMessage: string | null) => void
+    formErrorMessage: string | null
 }
 
-export default function TaskSubmitForm({ addTask, onChange, value }: TaskSubmitFormProps) {
+export default function TaskSubmitForm({ addTask, onChange, value, setFormErrorMessage, formErrorMessage }: TaskSubmitFormProps) {
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
-    const [errorMessage, setErrorMessage] = useState<string | null>("")
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -38,7 +39,7 @@ export default function TaskSubmitForm({ addTask, onChange, value }: TaskSubmitF
                                 value={date}
                                 onChange={(e) => {
                                     setDate(e.target.value)
-                                    setErrorMessage("")
+                                    setFormErrorMessage(null)
                                 }}
                             />
                         </div>
@@ -53,15 +54,15 @@ export default function TaskSubmitForm({ addTask, onChange, value }: TaskSubmitF
                                 value={value}
                                 onChange={(e) => {
                                     onChange(e.target.value)
-                                    setErrorMessage("")
+                                    setFormErrorMessage(null)
                                 }}
                             />
                         </div>
 
-                        {errorMessage && (
+                        {formErrorMessage && (
                             <div className="flex flex-row items-center gap-2 text-red-500">
                                 <AiOutlineExclamationCircle />
-                                <span>{errorMessage}</span>
+                                <span>{formErrorMessage}</span>
                             </div>
                         )}
                     </div>

@@ -10,11 +10,17 @@ import EmptyTasksCard from "./EmptyTasksCard";
 import type { Task } from "@/types/ToDo";
 import DeleteDialog from "./DeleteDialog";
 import TaskSubmitForm from "./TaskSubmitForm";
+import { toast } from "sonner";
 
-export default function TasksDisplay() {
+interface TasksDisplayProps {
+    isServerOnline: boolean
+}
+
+export default function TasksDisplay({ isServerOnline }: TasksDisplayProps) {
     const [tasks, setTasks] = useState<Task[]>([])
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null)
     const [toDoListId, setToDoListId] = useState<string>("")
     const [updatedTaskName, setUpdatedTaskName] = useState<string>("")
 
@@ -27,22 +33,25 @@ export default function TasksDisplay() {
     const handleDeleteList = async () => {
         try {
             const response = await api.delete(`/${toDoListId}`)
-            alert(response.data.message)
+            toast.success(response.data.message)
             fetchToDoList()
         } catch (error) {
             console.error("Error deleting list: ", error);
             setErrorMessage("Failed to delete list. Please try again.")
+            toast.error("List has not been deleted")
         }
     }
 
     //for delete a single task
     const handleDeleteTask = async (taskId: string) => {
         try {
-            await api.delete(`/${toDoListId}/tasks/${taskId}`)
+            const response = await api.delete(`/${toDoListId}/tasks/${taskId}`)
             fetchToDoList()
+            toast.success(response.data.message)
         } catch (error) {
             console.error("Error deleting task: ", error);
             setErrorMessage("Failed to delete task. Please try again.")
+            toast.error("Task has not been deleted")
         }
     }
 
@@ -59,14 +68,16 @@ export default function TasksDisplay() {
     //To update task name
     const handleUpdateTaskName = async (taskId: string) => {
         try {
-            await api.patch(`/${toDoListId}/tasks/${taskId}`, {
+            const response = await api.patch(`/${toDoListId}/tasks/${taskId}`, {
                 name: updatedTaskName
             })
             fetchToDoList()
             setUpdatedTaskName("")
+            toast.success(response.data.message)
         } catch (error) {
             console.error("Error editing task: ", error);
             setErrorMessage("Failed to editing task. Please try again.")
+            toast.error("Task has not been updated")
         }
     }
 
@@ -98,6 +109,7 @@ export default function TasksDisplay() {
             if (response.data.length > 0) {
                 setTasks(response.data[0].tasks)
                 setToDoListId(response.data[0]._id)
+                setErrorMessage(null)
             } else {
                 setTasks([])
                 setToDoListId("")
@@ -109,32 +121,53 @@ export default function TasksDisplay() {
     }
 
     //to add a task in empty tasklist/ task submission form
-    const addTask = async (date: Date, taskName: string) => {
+    const addTask = async (date: Date, taskName: string, form: boolean) => {
         try {
-            await api.post("/create", {
+            const response = await api.post("/create", {
                 date,
                 tasks: [{ name: taskName }]
             })
             setUpdatedTaskName("")
             fetchToDoList()
+            toast.success(response.data.message)
         } catch (error) {
             console.error("Error saving task: ", error)
-            setErrorMessage("Failed to save task. Please try again.")
+            if (form) {
+                setFormErrorMessage("Failed to save task. Please try again.")
+            } else {
+                setErrorMessage("Failed to save task. Please try again.")
+            }
+
+            toast.error("Task has not been created")
         }
+    }
+
+    const handleFormErrorMessage = (formErrorMessage: string | null) => {
+        setFormErrorMessage(formErrorMessage)
     }
 
     useEffect(() => {
         fetchToDoList()
-    }, [date])
+    }, [date, isServerOnline])
+
+    useEffect(() => {
+        if (!isServerOnline) {
+            toast.error("Connection error")
+        } else {
+            toast.success("Back to online")
+        }
+    }, [isServerOnline])
 
     return (
         <div className="flex flex-row w-full">
             <div className="flex-1 flex justify-center">
                 <div className="w-2/3">
                     <TaskSubmitForm
-                        addTask={(date) => addTask(date, updatedTaskName)}
+                        addTask={(date) => addTask(date, updatedTaskName, true)}
                         onChange={handleTaskNameChange}
                         value={updatedTaskName}
+                        setFormErrorMessage={handleFormErrorMessage}
+                        formErrorMessage={formErrorMessage}
                     />
                 </div>
             </div>
@@ -180,7 +213,7 @@ export default function TasksDisplay() {
                                 )}
                                 {tasks.length <= 0 && !errorMessage && (
                                     <EmptyTasksCard
-                                        addTask={() => addTask(new Date(date), updatedTaskName)}
+                                        addTask={() => addTask(new Date(date), updatedTaskName, false)}
                                         onChange={handleTaskNameChange}
                                         value={updatedTaskName}
                                         editInitialTaskName={() => handleInitialEditTaskName("")}
