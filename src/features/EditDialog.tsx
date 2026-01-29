@@ -16,19 +16,23 @@ import { FaEdit } from "react-icons/fa"
 
 interface EditProps {
     task: Task
-    value: string
     editTask: (taskId: string) => void
-    onChange: (value: string) => void
+    handleTaskNameChange: (taskName: string) => void
+    taskName: string
     editInitialTaskName: (taskName: string) => void
 }
 
-export default function EditDialog({ editTask, task, onChange, value, editInitialTaskName }: EditProps) {
+export default function EditDialog({ editTask, task, handleTaskNameChange, taskName, editInitialTaskName }: EditProps) {
 
     return (
         <Dialog>
             <form>
                 <DialogTrigger asChild>
-                    <Button onClick={() => editInitialTaskName(task.name)}><FaEdit /></Button>
+                    <Button className="rounded-full w-10 h-10 items-center justify-center"
+                        variant={"secondary"}
+                        onClick={() => editInitialTaskName(task.name)}>
+                        <FaEdit />
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -41,8 +45,8 @@ export default function EditDialog({ editTask, task, onChange, value, editInitia
                     <div className="grid gap-4">
                         <div className="grid gap-3">
                             <Label htmlFor="taskName">Task</Label>
-                            <Input type="text" id="taskName" name="name" value={value}
-                                onChange={(e) => onChange(e.target.value)}
+                            <Input type="text" id="taskName" name="name" value={taskName}
+                                onChange={(e) => handleTaskNameChange(e.target.value)}
                             />
                         </div>
                     </div>

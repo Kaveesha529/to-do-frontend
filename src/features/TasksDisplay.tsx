@@ -1,139 +1,84 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { FaSyncAlt } from "react-icons/fa"
-import TasksCard from "./TasksCard";
-import { useEffect, useState } from "react";
-import api from "@/api/GetApi";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
-import EmptyTasksCard from "./EmptyTasksCard";
-import type { Task } from "@/types/ToDo";
-import DeleteDialog from "./DeleteDialog";
+import { Button } from "@/components/ui/button"
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { FaArrowLeft, FaArrowRight, FaSyncAlt } from "react-icons/fa"
+import TasksCard from "./TasksCard"
+import EmptyTasksCard from "./EmptyTasksCard"
+import { AiOutlineExclamationCircle } from "react-icons/ai"
+import DeleteDialog from "./DeleteDialog"
+import type { Task } from "@/types/ToDo"
 
-export default function TasksDisplay() {
-    const [tasks, setTasks] = useState<Task[]>([])
-    const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const [toDoListId, setToDoListId] = useState<string>("")
-    const [updatedTaskName, setUpdatedTaskName] = useState<string>("")
+interface TasksDisplayProps {
+    date: string
+    setDate: (date: string) => void
+    handleRefresh: () => void
+    setTasks: (tasks: Task[]) => void
+    setErrorMessage: (errorMessage: string) => void
+    tasks: Task[]
+    errorMessage: string | null
+    handleDeleteTask: (taskId: string) => void
+    handleUpdateTaskName: (taskId: string) => void
+    handleTaskNameChange: (taskName: string) => void
+    updatedTaskName: string
+    handleInitialEditTaskName: (taskId: string) => void
+    handleStatusToggle: (taskStatus: "pending" | "done", taskId: string) => void
+    addTask: (date: Date, taskName: string, form: boolean) => void
+    handleDeleteList: () => void
+}
 
-    //for refresh icon to refresh list
-    const handleRefresh = () => {
-        fetchToDoList()
-    }
+export default function TasksDisplay({
+    date,
+    setDate,
+    handleRefresh,
+    setTasks,
+    setErrorMessage,
+    tasks,
+    errorMessage,
+    handleDeleteTask,
+    handleUpdateTaskName,
+    handleTaskNameChange,
+    updatedTaskName,
+    handleInitialEditTaskName,
+    handleStatusToggle,
+    addTask,
+    handleDeleteList
 
-    //for delete a full list
-    const handleDeleteList = async () => {
-        try {
-            const response = await api.delete(`/${toDoListId}`)
-            alert(response.data.message)
-            fetchToDoList()
-        } catch (error) {
-            console.error("Error deleting list: ", error);
-            setErrorMessage("Failed to delete list. Please try again.")
-        }
-    }
-
-    //for delete a single task
-    const handleDeleteTask = async (taskId: string) => {
-        try {
-            await api.delete(`/${toDoListId}/tasks/${taskId}`)
-            fetchToDoList()
-        } catch (error) {
-            console.error("Error deleting task: ", error);
-            setErrorMessage("Failed to delete task. Please try again.")
-        }
-    }
-
-    //to track editing name
-    const handleTaskNameChange = (newTaskName: string) => {
-        setUpdatedTaskName(newTaskName)
-    }
-
-    //to put current name as initial editing name in editing input box
-    const handleInitialEditTaskName = (taskName: string) => {
-        setUpdatedTaskName(taskName)
-    }
-
-    //To update task name
-    const handleUpdateTaskName = async (taskId: string) => {
-        try {
-            await api.patch(`/${toDoListId}/tasks/${taskId}`, {
-                name: updatedTaskName
-            })
-            fetchToDoList()
-            setUpdatedTaskName("")
-        } catch (error) {
-            console.error("Error editing task: ", error);
-            setErrorMessage("Failed to editing task. Please try again.")
-        }
-    }
-
-    //toggling status of a task
-    const handleStatusToggle = (taskStatus: "pending" | "done", taskId: string) => {
-        const newStatus = taskStatus === "pending" ? "done" : "pending"
-        handleUpdateTaskStatus(taskId, newStatus)
-    }
-
-    //To update a task status
-    const handleUpdateTaskStatus = async (taskId: string, newStatus: "pending" | "done") => {
-        try {
-            await api.patch(`/${toDoListId}/tasks/${taskId}`, {
-                status: newStatus
-            })
-            fetchToDoList()
-        } catch (error) {
-            console.error("Error updating task status: ", error);
-            setErrorMessage("Failed to update task status. Please try again.")
-        }
-    }
-
-    //to get todo list
-    const fetchToDoList = async () => {
-        try {
-            const response = await api.get("/", {
-                params: { date }
-            })
-            if (response.data.length > 0) {
-                setTasks(response.data[0].tasks)
-                setToDoListId(response.data[0]._id)
-            } else {
-                setTasks([])
-                setToDoListId("")
-            }
-        } catch (error) {
-            console.error("Error fetching tasks:", error);
-            setErrorMessage("Failed to load tasks. Please try again.")
-        }
-    }
-
-    //to add a task in empty tasklist
-    const addTask = async (date: Date, taskName: string) => {
-        try {
-            await api.post("/create", {
-                date,
-                tasks: [{ name: taskName }]
-            })
-            setUpdatedTaskName("")
-            fetchToDoList()
-        } catch (error) {
-            console.error("Error saving task: ", error)
-            setErrorMessage("Failed to save task. Please try again.")
-        }
-    }
-
-    useEffect(() => {
-        fetchToDoList()
-    }, [date])
+}: TasksDisplayProps) {
 
     return (
         <div className="w-full">
             <Card>
                 <CardHeader>
-                    <CardTitle>{date}</CardTitle>
+                    <CardTitle>
+                        <div className="flex flex-row gap-2 items-center">
+                            <Button
+                                variant={"outline"}
+                                className="rounded-full w-8 h-8 items-center justify-center"
+                                onClick={() => {
+                                    const currentDate = new Date(date)
+                                    currentDate.setDate(currentDate.getDate() - 1)
+                                    setDate(currentDate.toISOString().split("T")[0])
+                                }}
+                            >
+                                <FaArrowLeft />
+                            </Button>
+                            {date}
+                            <Button
+                                variant={"outline"}
+                                className="rounded-full w-8 h-8 items-center justify-center"
+                                onClick={() => {
+                                    const currentDate = new Date(date)
+                                    currentDate.setDate(currentDate.getDate() + 1)
+                                    setDate(currentDate.toISOString().split("T")[0])
+                                }}
+                            >
+                                <FaArrowRight />
+                            </Button>
+                        </div>
+                    </CardTitle>
                     <div className="flex flex-row gap-2">
                         <CardAction>
-                            <Button onClick={handleRefresh}><FaSyncAlt /></Button>
+                            <Button variant={"ghost"} onClick={handleRefresh} className="rounded-full w-10 h-10 items-center justify-center"><FaSyncAlt /></Button>
                         </CardAction>
                         <CardAction>
                             <Input
@@ -158,8 +103,8 @@ export default function TasksDisplay() {
                                 task={task}
                                 deleteTask={() => handleDeleteTask(task._id)}
                                 editTask={() => handleUpdateTaskName(task._id)}
-                                onChange={handleTaskNameChange}
-                                value={updatedTaskName}
+                                handleTaskNameChange={(taskName) => handleTaskNameChange(taskName)}
+                                taskName={updatedTaskName}
                                 editInitialTaskName={() => handleInitialEditTaskName(task.name)}
                                 toggleStatus={() => handleStatusToggle(task.status, task._id)}
                             />
@@ -167,7 +112,7 @@ export default function TasksDisplay() {
                     )}
                     {tasks.length <= 0 && !errorMessage && (
                         <EmptyTasksCard
-                            addTask={() => addTask(new Date(date), updatedTaskName)}
+                            addTask={() => addTask(new Date(date), updatedTaskName, false)}
                             onChange={handleTaskNameChange}
                             value={updatedTaskName}
                             editInitialTaskName={() => handleInitialEditTaskName("")}

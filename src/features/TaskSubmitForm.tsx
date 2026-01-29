@@ -1,4 +1,3 @@
-import api from "@/api/GetApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,27 +5,20 @@ import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 
-export default function TaskSubmitForm() {
+interface TaskSubmitFormProps {
+    addTask: (date: Date) => void
+    onChange: (value: string) => void
+    value: string
+    setFormErrorMessage: (formErrorMessage: string | null) => void
+    formErrorMessage: string | null
+}
+
+export default function TaskSubmitForm({ addTask, onChange, value, setFormErrorMessage, formErrorMessage }: TaskSubmitFormProps) {
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
-    const [taskName, setTaskName] = useState<string>("")
-    const [errorMessage, setErrorMessage] = useState<string | null>("")
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        addTask(new Date(date), taskName)
-    }
-
-    const addTask = async (date: Date, taskName: string) => {
-        try {
-            await api.post("/create", {
-                date,
-                tasks: [{ name: taskName }]
-            })
-            setTaskName("")
-        } catch (error) {
-            console.error("Error saving task: ", error)
-            setErrorMessage("Failed to save task. Please try again.")
-        }
+        addTask(new Date(date))
     }
 
     return (
@@ -47,7 +39,7 @@ export default function TaskSubmitForm() {
                                 value={date}
                                 onChange={(e) => {
                                     setDate(e.target.value)
-                                    setErrorMessage("")
+                                    setFormErrorMessage(null)
                                 }}
                             />
                         </div>
@@ -59,18 +51,18 @@ export default function TaskSubmitForm() {
                                 type="text"
                                 placeholder="Enter your task..."
                                 required
-                                value={taskName}
+                                value={value}
                                 onChange={(e) => {
-                                    setTaskName(e.target.value)
-                                    setErrorMessage("")
+                                    onChange(e.target.value)
+                                    setFormErrorMessage(null)
                                 }}
                             />
                         </div>
 
-                        {errorMessage && (
+                        {formErrorMessage && (
                             <div className="flex flex-row items-center gap-2 text-red-500">
                                 <AiOutlineExclamationCircle />
-                                <span>{errorMessage}</span>
+                                <span>{formErrorMessage}</span>
                             </div>
                         )}
                     </div>

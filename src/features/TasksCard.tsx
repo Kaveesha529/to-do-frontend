@@ -8,20 +8,27 @@ interface TaskCardProps {
     task: Task
     deleteTask: (taskId: string) => void
     editTask: (taskId: string) => void
-    value: string
-    onChange: (value: string) => void
+    handleTaskNameChange: (taskName: string) => void
+    taskName: string
     editInitialTaskName: (taskName: string) => void
     toggleStatus: (taskStatus: "pending" | "done", taskId: string) => void
 }
 
-export default function TasksCard({ task, deleteTask, editTask, onChange, value, editInitialTaskName, toggleStatus }: TaskCardProps) {
+export default function TasksCard({ task, deleteTask, editTask, handleTaskNameChange, editInitialTaskName, toggleStatus, taskName }: TaskCardProps) {
     return (
         <div className="w-full my-2">
             <div className="flex flex-row gap-3">
                 <div className="flex flex-row items-center">
                     {task.status === "pending" ?
-                        <Button variant={"outline"} onClick={() => toggleStatus(task.status, task._id)}></Button> :
-                        <Button onClick={() => toggleStatus(task.status, task._id)}><FaCheck /></Button>
+                        <Button className="w-10 h-10 items-center justify-center"
+                            variant={"outline"}
+                            onClick={() => toggleStatus(task.status, task._id)}>
+
+                        </Button> :
+                        <Button className="w-10 h-10 items-center justify-center"
+                            onClick={() => toggleStatus(task.status, task._id)}>
+                            <FaCheck />
+                        </Button>
                     }
                 </div>
                 <Card className="py-3 w-3/4">
@@ -35,11 +42,15 @@ export default function TasksCard({ task, deleteTask, editTask, onChange, value,
                     <EditDialog
                         editTask={() => editTask(task._id)}
                         task={task}
-                        onChange={onChange}
-                        value={value}
+                        handleTaskNameChange={handleTaskNameChange}
+                        taskName={taskName}
                         editInitialTaskName={() => editInitialTaskName(task.name)}
                     />
-                    <Button onClick={() => deleteTask(task._id)}><FaTrash /></Button>
+                    <Button className="rounded-full w-10 h-10 items-center justify-center"
+                        variant={"secondary"}
+                        onClick={() => deleteTask(task._id)}>
+                        <FaTrash />
+                    </Button>
                 </div>
             </div>
         </div>
