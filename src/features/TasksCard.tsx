@@ -1,24 +1,56 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Task } from "@/types/ToDo";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaCheck, FaTrash } from "react-icons/fa";
+import EditDialog from "./EditDialog";
 
 interface TaskCardProps {
-    task: Task;
+    task: Task
+    deleteTask: (taskId: string) => void
+    editTask: (taskId: string) => void
+    handleTaskNameChange: (taskName: string) => void
+    taskName: string
+    editInitialTaskName: (taskName: string) => void
+    toggleStatus: (taskStatus: "pending" | "done", taskId: string) => void
 }
 
-export default function TasksCard({ task }: TaskCardProps) {
+export default function TasksCard({ task, deleteTask, editTask, handleTaskNameChange, editInitialTaskName, toggleStatus, taskName }: TaskCardProps) {
     return (
         <div className="w-full my-2">
-            <div className="flex flex-row gap-1">
+            <div className="flex flex-row gap-3">
+                <div className="flex flex-row items-center">
+                    {task.status === "pending" ?
+                        <Button className="w-10 h-10 items-center justify-center"
+                            variant={"outline"}
+                            onClick={() => toggleStatus(task.status, task._id)}>
+
+                        </Button> :
+                        <Button className="w-10 h-10 items-center justify-center"
+                            onClick={() => toggleStatus(task.status, task._id)}>
+                            <FaCheck />
+                        </Button>
+                    }
+                </div>
                 <Card className="py-3 w-3/4">
                     <CardContent>
-                        <p>{task.name}</p>
+                        {task.status === "pending" ?
+                            (<p >{task.name}</p>) :
+                            (<p className="line-through">{task.name}</p>)}
                     </CardContent>
                 </Card>
                 <div className="flex flex-row w-1/4 items-center justify-end gap-2">
-                    <Button><FaEdit /></Button>
-                    <Button><FaTrash /></Button>
+                    <EditDialog
+                        editTask={() => editTask(task._id)}
+                        task={task}
+                        handleTaskNameChange={handleTaskNameChange}
+                        taskName={taskName}
+                        editInitialTaskName={() => editInitialTaskName(task.name)}
+                    />
+                    <Button className="rounded-full w-10 h-10 items-center justify-center"
+                        variant={"secondary"}
+                        onClick={() => deleteTask(task._id)}>
+                        <FaTrash />
+                    </Button>
                 </div>
             </div>
         </div>
