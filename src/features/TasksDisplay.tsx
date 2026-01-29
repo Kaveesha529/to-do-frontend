@@ -9,6 +9,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EmptyTasksCard from "./EmptyTasksCard";
 import type { Task } from "@/types/ToDo";
 import DeleteDialog from "./DeleteDialog";
+import TaskSubmitForm from "./TaskSubmitForm";
 
 export default function TasksDisplay() {
     const [tasks, setTasks] = useState<Task[]>([])
@@ -107,7 +108,7 @@ export default function TasksDisplay() {
         }
     }
 
-    //to add a task in empty tasklist
+    //to add a task in empty tasklist/ task submission form
     const addTask = async (date: Date, taskName: string) => {
         try {
             await api.post("/create", {
@@ -127,65 +128,81 @@ export default function TasksDisplay() {
     }, [date])
 
     return (
-        <div className="w-full">
-            <Card>
-                <CardHeader>
-                    <CardTitle>{date}</CardTitle>
-                    <div className="flex flex-row gap-2">
-                        <CardAction>
-                            <Button onClick={handleRefresh}><FaSyncAlt /></Button>
-                        </CardAction>
-                        <CardAction>
-                            <Input
-                                id="date"
-                                type="date"
-                                value={date}
-                                onChange={(e) => {
-                                    setDate(e.target.value)
-                                    setTasks([])
-                                    setErrorMessage("")
-                                }}
-                            />
-                        </CardAction>
+        <div className="flex flex-row w-full">
+            <div className="flex-1 flex justify-center">
+                <div className="w-2/3">
+                    <TaskSubmitForm
+                        addTask={(date) => addTask(date, updatedTaskName)}
+                        onChange={handleTaskNameChange}
+                        value={updatedTaskName}
+                    />
+                </div>
+            </div>
+            <div className="flex-1 flex justify-center">
+                <div className="w-2/3">
+                    <div className="w-full">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{date}</CardTitle>
+                                <div className="flex flex-row gap-2">
+                                    <CardAction>
+                                        <Button onClick={handleRefresh}><FaSyncAlt /></Button>
+                                    </CardAction>
+                                    <CardAction>
+                                        <Input
+                                            id="date"
+                                            type="date"
+                                            value={date}
+                                            onChange={(e) => {
+                                                setDate(e.target.value)
+                                                setTasks([])
+                                                setErrorMessage("")
+                                            }}
+                                        />
+                                    </CardAction>
+                                </div>
+                                <CardDescription>Tasks assigned for {date}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {tasks.length > 0 && !errorMessage && (
+                                    tasks.map(task => (
+                                        <TasksCard
+                                            key={task._id}
+                                            task={task}
+                                            deleteTask={() => handleDeleteTask(task._id)}
+                                            editTask={() => handleUpdateTaskName(task._id)}
+                                            onChange={handleTaskNameChange}
+                                            value={updatedTaskName}
+                                            editInitialTaskName={() => handleInitialEditTaskName(task.name)}
+                                            toggleStatus={() => handleStatusToggle(task.status, task._id)}
+                                        />
+                                    ))
+                                )}
+                                {tasks.length <= 0 && !errorMessage && (
+                                    <EmptyTasksCard
+                                        addTask={() => addTask(new Date(date), updatedTaskName)}
+                                        onChange={handleTaskNameChange}
+                                        value={updatedTaskName}
+                                        editInitialTaskName={() => handleInitialEditTaskName("")}
+                                    />
+                                )}
+                                {errorMessage && (
+                                    <div className="flex flex-row items-center gap-2 text-red-500">
+                                        <AiOutlineExclamationCircle />
+                                        <span>{errorMessage}</span>
+                                    </div>
+                                )}
+                            </CardContent>
+                            <CardFooter className="flex flex-row justify-center">
+                                {tasks.length > 0 && (
+                                    <DeleteDialog handleDelete={handleDeleteList} />
+                                )}
+                            </CardFooter>
+                        </Card>
                     </div>
-                    <CardDescription>Tasks assigned for {date}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {tasks.length > 0 && !errorMessage && (
-                        tasks.map(task => (
-                            <TasksCard
-                                key={task._id}
-                                task={task}
-                                deleteTask={() => handleDeleteTask(task._id)}
-                                editTask={() => handleUpdateTaskName(task._id)}
-                                onChange={handleTaskNameChange}
-                                value={updatedTaskName}
-                                editInitialTaskName={() => handleInitialEditTaskName(task.name)}
-                                toggleStatus={() => handleStatusToggle(task.status, task._id)}
-                            />
-                        ))
-                    )}
-                    {tasks.length <= 0 && !errorMessage && (
-                        <EmptyTasksCard
-                            addTask={() => addTask(new Date(date), updatedTaskName)}
-                            onChange={handleTaskNameChange}
-                            value={updatedTaskName}
-                            editInitialTaskName={() => handleInitialEditTaskName("")}
-                        />
-                    )}
-                    {errorMessage && (
-                        <div className="flex flex-row items-center gap-2 text-red-500">
-                            <AiOutlineExclamationCircle />
-                            <span>{errorMessage}</span>
-                        </div>
-                    )}
-                </CardContent>
-                <CardFooter className="flex flex-row justify-center">
-                    {tasks.length > 0 && (
-                        <DeleteDialog handleDelete={handleDeleteList} />
-                    )}
-                </CardFooter>
-            </Card>
+                </div>
+            </div>
         </div>
+
     )
 }
