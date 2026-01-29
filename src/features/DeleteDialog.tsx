@@ -11,7 +11,9 @@ export default function DeleteDialog({ handleDelete }: DeleteDialogProps) {
         <Dialog>
             <form>
                 <DialogTrigger asChild>
-                    <Button><FaTrash /></Button>
+                    <Button variant={"secondary"} className="rounded-full w-10 h-10 items-center justify-center">
+                        <FaTrash />
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
