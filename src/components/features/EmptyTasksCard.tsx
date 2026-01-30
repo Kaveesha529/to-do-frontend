@@ -2,14 +2,7 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { IconFolderCode } from "@tabler/icons-react"
 import AddTaskDialog from "./AddTaskDialog";
 
-interface TaskCardProps {
-    value: string
-    addTask: () => void
-    onChange: (value: string) => void
-    editInitialTaskName: (taskName: string) => void
-}
-
-export default function EmptyTasksCard({ addTask, onChange, value, editInitialTaskName }: TaskCardProps) {
+export default function EmptyTasksCard() {
     return (
         <Empty>
             <EmptyHeader>
@@ -23,12 +16,7 @@ export default function EmptyTasksCard({ addTask, onChange, value, editInitialTa
                 </EmptyDescription>
             </EmptyHeader>
             <EmptyContent className="flex-row justify-center gap-2">
-                <AddTaskDialog
-                    addTask={() => addTask()}
-                    onChange={onChange}
-                    value={value}
-                    editInitialTaskName={() => editInitialTaskName("")}
-                />
+                <AddTaskDialog />
             </EmptyContent>
         </Empty>
     )

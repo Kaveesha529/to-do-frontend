@@ -3,18 +3,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { Task } from "@/types/ToDo";
 import { FaCheck, FaTrash } from "react-icons/fa";
 import EditDialog from "./EditDialog";
+import { useToDo } from "@/contexts/ToDoContext";
 
 interface TaskCardProps {
     task: Task
-    deleteTask: (taskId: string) => void
-    editTask: (taskId: string) => void
-    handleTaskNameChange: (taskName: string) => void
-    taskName: string
-    editInitialTaskName: (taskName: string) => void
-    toggleStatus: (taskStatus: "pending" | "done", taskId: string) => void
 }
 
-export default function TasksCard({ task, deleteTask, editTask, handleTaskNameChange, editInitialTaskName, toggleStatus, taskName }: TaskCardProps) {
+export default function TasksCard({ task }: TaskCardProps) {
+
+    const toDo = useToDo()
+
     return (
         <div className="w-full my-2">
             <div className="flex flex-row gap-3">
@@ -22,11 +20,11 @@ export default function TasksCard({ task, deleteTask, editTask, handleTaskNameCh
                     {task.status === "pending" ?
                         <Button className="w-10 h-10 items-center justify-center"
                             variant={"outline"}
-                            onClick={() => toggleStatus(task.status, task._id)}>
+                            onClick={() => toDo.handleStatusToggle(task.status, task._id)}>
 
                         </Button> :
                         <Button className="w-10 h-10 items-center justify-center"
-                            onClick={() => toggleStatus(task.status, task._id)}>
+                            onClick={() => toDo.handleStatusToggle(task.status, task._id)}>
                             <FaCheck />
                         </Button>
                     }
@@ -40,15 +38,11 @@ export default function TasksCard({ task, deleteTask, editTask, handleTaskNameCh
                 </Card>
                 <div className="flex flex-row w-1/4 items-center justify-end gap-2">
                     <EditDialog
-                        editTask={() => editTask(task._id)}
                         task={task}
-                        handleTaskNameChange={handleTaskNameChange}
-                        taskName={taskName}
-                        editInitialTaskName={() => editInitialTaskName(task.name)}
                     />
                     <Button className="rounded-full w-10 h-10 items-center justify-center"
                         variant={"secondary"}
-                        onClick={() => deleteTask(task._id)}>
+                        onClick={() => toDo.handleDeleteTask(task._id)}>
                         <FaTrash />
                     </Button>
                 </div>

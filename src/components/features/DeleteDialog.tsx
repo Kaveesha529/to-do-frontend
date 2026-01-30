@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToDo } from "@/contexts/ToDoContext";
 import { FaTrash } from "react-icons/fa";
 
-interface DeleteDialogProps {
-    handleDelete: () => void
-}
+export default function DeleteDialog() {
 
-export default function DeleteDialog({ handleDelete }: DeleteDialogProps) {
+    const toDo = useToDo()
+
     return (
         <Dialog>
             <form>
@@ -26,7 +26,7 @@ export default function DeleteDialog({ handleDelete }: DeleteDialogProps) {
                         <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button onClick={handleDelete}>Delete list</Button>
+                        <Button onClick={toDo.handleDeleteList}>Delete list</Button>
                     </DialogFooter>
                 </DialogContent>
             </form>
