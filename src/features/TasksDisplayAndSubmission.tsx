@@ -1,47 +1,42 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import TaskSubmitForm from "../components/features/TaskSubmitForm";
 import { toast } from "sonner";
 import { useToDo } from "@/contexts/ToDoContext";
 import TasksDisplay from "@/components/features/TasksDisplay";
+import { useServer } from "@/contexts/ServerConnectionContext";
 
-interface TasksDisplayAndSubmissionProps {
-    isServerOnline: boolean
-    isOnline: boolean
-    wasServerOffline: ReturnType<typeof useRef<boolean>>
-    wasOffline: ReturnType<typeof useRef<boolean>>
-}
-
-export default function TasksDisplayAndSubmission({ isServerOnline, isOnline, wasServerOffline, wasOffline }: TasksDisplayAndSubmissionProps) {
+export default function TasksDisplayAndSubmission() {
 
     const toDo = useToDo()
+    const serverConnection = useServer()
 
     useEffect(() => {
         toDo.fetchToDoList()
-    }, [toDo.date, isServerOnline, isOnline])
+    }, [toDo.date, serverConnection.isServerOnline, serverConnection.isOnline])
 
     useEffect(() => {
-        if (!isOnline) return
+        if (!serverConnection.isOnline) return
 
-        if (!isServerOnline && !wasServerOffline.current) {
-            wasServerOffline.current = true
+        if (!serverConnection.isServerOnline && !serverConnection.wasServerOffline.current) {
+            serverConnection.wasServerOffline.current = true
             toast.error("Server unavailable")
-        } else if (isServerOnline && wasServerOffline.current) {
-            wasServerOffline.current = false
+        } else if (serverConnection.isServerOnline && serverConnection.wasServerOffline.current) {
+            serverConnection.wasServerOffline.current = false
             toast.success("Server connected")
         }
-    }, [isServerOnline, isOnline])
+    }, [serverConnection.isServerOnline, serverConnection.isOnline])
 
     useEffect(() => {
-        if (!isOnline && !wasOffline.current) {
-            wasOffline.current = true
+        if (!serverConnection.isOnline && !serverConnection.wasOffline.current) {
+            serverConnection.wasOffline.current = true
             toast.error("No internet connection")
             toDo.handleErrorMessage("Internet connection has been lost")
-        } else if (isOnline && wasOffline.current) {
-            wasOffline.current = false
+        } else if (serverConnection.isOnline && serverConnection.wasOffline.current) {
+            serverConnection.wasOffline.current = false
             toast.success("Back to Online")
             toDo.handleErrorMessage(null)
         }
-    }, [isOnline])
+    }, [serverConnection.isOnline])
 
 
     return (
