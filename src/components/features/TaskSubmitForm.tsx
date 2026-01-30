@@ -1,24 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useToDo } from "@/contexts/ToDoContext";
 import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 
-interface TaskSubmitFormProps {
-    addTask: (date: Date) => void
-    onChange: (value: string) => void
-    value: string
-    setFormErrorMessage: (formErrorMessage: string | null) => void
-    formErrorMessage: string | null
-}
-
-export default function TaskSubmitForm({ addTask, onChange, value, setFormErrorMessage, formErrorMessage }: TaskSubmitFormProps) {
+export default function TaskSubmitForm() {
     const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
+
+    const toDo = useToDo()
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        addTask(new Date(date))
+        toDo.addTask(new Date(date), toDo.updatedTaskName, true)
     }
 
     return (
@@ -39,7 +34,7 @@ export default function TaskSubmitForm({ addTask, onChange, value, setFormErrorM
                                 value={date}
                                 onChange={(e) => {
                                     setDate(e.target.value)
-                                    setFormErrorMessage(null)
+                                    toDo.handleFormErrorMessage(null)
                                 }}
                             />
                         </div>
@@ -51,18 +46,18 @@ export default function TaskSubmitForm({ addTask, onChange, value, setFormErrorM
                                 type="text"
                                 placeholder="Enter your task..."
                                 required
-                                value={value}
+                                value={toDo.updatedTaskName}
                                 onChange={(e) => {
-                                    onChange(e.target.value)
-                                    setFormErrorMessage(null)
+                                    toDo.handleTaskNameChange(e.target.value)
+                                    toDo.handleFormErrorMessage(null)
                                 }}
                             />
                         </div>
 
-                        {formErrorMessage && (
+                        {toDo.formErrorMessage && (
                             <div className="flex flex-row items-center gap-2 text-red-500">
                                 <AiOutlineExclamationCircle />
-                                <span>{formErrorMessage}</span>
+                                <span>{toDo.formErrorMessage}</span>
                             </div>
                         )}
                     </div>

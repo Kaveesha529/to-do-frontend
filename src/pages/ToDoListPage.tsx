@@ -1,13 +1,9 @@
-import TasksDisplay from "@/features/TasksDisplayAndSubmission";
+import TasksDisplayAndSubmission from "@/features/TasksDisplayAndSubmission";
 
-interface ToDoListPasgeProps {
-    isServerOnline: boolean
-}
-
-export default function ToDoListPage({ isServerOnline }: ToDoListPasgeProps) {
+export default function ToDoListPage() {
     return (
         <div className="w-full h-screen">
-            <TasksDisplay isServerOnline={isServerOnline} />
+            <TasksDisplayAndSubmission />
         </div>
     )
 }
