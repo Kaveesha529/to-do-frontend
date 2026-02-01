@@ -7,9 +7,10 @@ import { useState } from "react";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 export default function TaskSubmitForm() {
-    const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
 
     const toDo = useToDo()
+
+    const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0])
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
