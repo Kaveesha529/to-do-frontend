@@ -11,7 +11,22 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 export default function SignUpCard() {
 
     const { setIsLogin } = useLoginCtx()
-    const { show, setShow, email, setEmail, password, setPassword, success, setSuccess, handleSubmit, validPassword, loading, passwordError } = useHandleSignUp()
+    const {
+        show,
+        setShow,
+        email,
+        setEmail,
+        password,
+        setPassword,
+        success,
+        setSuccess,
+        handleSubmit,
+        validPassword,
+        loading,
+        passwordError,
+        emailError,
+        validEmail
+    } = useHandleSignUp()
 
     useEffect(() => {
         if (success) {
@@ -41,10 +56,12 @@ export default function SignUpCard() {
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
-                            <div className="flex flex-row items-center gap-2 text-red-500">
-                                <AiOutlineExclamationCircle />
-                                <span></span>
-                            </div>
+                            {emailError && (
+                                <div className="flex flex-row items-center gap-2 text-red-500">
+                                    <AiOutlineExclamationCircle />
+                                    <span>{emailError}</span>
+                                </div>
+                            )}
                             <Input
                                 type="email"
                                 id="email"
@@ -105,7 +122,7 @@ export default function SignUpCard() {
                         type="submit"
                         form="signUpForm"
                         className="w-full"
-                        disabled={!validPassword || loading}
+                        disabled={!validPassword || !validEmail || loading}
                     >
                         Sign up
                     </Button>
