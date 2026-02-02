@@ -5,11 +5,25 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useHandleLogin } from "@/hooks/useHandleLogin";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 export default function LoginCard() {
 
     const { setIsLogin } = useLoginCtx()
-    const { show, setShow, email, setEmail, password, setPassword, handleSubmit } = useHandleLogin()
+    const {
+        show,
+        setShow,
+        email,
+        setEmail,
+        password,
+        setPassword,
+        handleSubmit,
+        validPassword,
+        loading,
+        passwordError,
+        emailError,
+        validEmail
+    } = useHandleLogin()
 
     return (
         <Card className="w-full">
@@ -26,10 +40,16 @@ export default function LoginCard() {
                 </CardAction>
             </CardHeader>
             <CardContent>
-                <form id="signUpForm" onSubmit={handleSubmit}>
+                <form id="loginForm" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
+                            {emailError && (
+                                <div className="flex flex-row items-center gap-2 text-red-500">
+                                    <AiOutlineExclamationCircle />
+                                    <span>{emailError}</span>
+                                </div>
+                            )}
                             <Input
                                 type="email"
                                 id="email"
@@ -41,6 +61,12 @@ export default function LoginCard() {
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
+                            {passwordError && (
+                                <div className="flex flex-row items-center gap-2 text-red-500">
+                                    <AiOutlineExclamationCircle />
+                                    <span>{passwordError}</span>
+                                </div>
+                            )}
                             <div className="flex flex-row relative items-center">
                                 <Input
                                     className="pr-10"
@@ -82,8 +108,9 @@ export default function LoginCard() {
                 <div className="flex flex-col w-full gap-2">
                     <Button
                         type="submit"
-                        form="signUpForm"
+                        form="loginForm"
                         className="w-full"
+                        disabled={!validPassword || !validEmail || loading}
                     >
                         Login
                     </Button>
