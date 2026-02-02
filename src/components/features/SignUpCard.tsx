@@ -5,11 +5,19 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { HiEye, HiEyeOff } from "react-icons/hi"
 import { useHandleSignUp } from "@/hooks/useHandleSignUp";
+import { useEffect } from "react";
 
 export default function SignUpCard() {
 
     const { setIsLogin } = useLoginCtx()
-    const { show, setShow, email, setEmail, password, setPassword, success, setSuccess, handleSubmit } = useHandleSignUp()
+    const { show, setShow, email, setEmail, password, setPassword, success, setSuccess, handleSubmit, validPassword, loading } = useHandleSignUp()
+
+    useEffect(() => {
+        if (success) {
+            setIsLogin(true)
+            setSuccess(false)
+        }
+    }, [success])
 
     return (
         <Card className="w-full">
@@ -28,10 +36,6 @@ export default function SignUpCard() {
             <CardContent>
                 <form id="signUpForm" onSubmit={(e) => {
                     handleSubmit(e)
-                    if (success) {
-                        setIsLogin(true)
-                        setSuccess(false)
-                    }
                 }}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
@@ -90,6 +94,7 @@ export default function SignUpCard() {
                         type="submit"
                         form="signUpForm"
                         className="w-full"
+                        disabled={!validPassword || loading}
                     >
                         Sign up
                     </Button>
