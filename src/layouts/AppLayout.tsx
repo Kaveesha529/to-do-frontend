@@ -1,3 +1,4 @@
+import NotFoundPage from "@/pages/NotFoundPage";
 import SignUpAndLoginPage from "@/pages/SignUpAndLoginPage";
 import ToDoListPage from "@/pages/ToDoListPage";
 import ProtectedRoute from "@/services/ProtectedRoute";
@@ -10,6 +11,7 @@ export default function AppLayout() {
             <Toaster position="top-right" />
             <Routes>
                 <Route path='/' element={<SignUpAndLoginPage />} />
+                <Route path='*' element={<NotFoundPage />} />
                 <Route path='/todo' element={
                     <ProtectedRoute>
                         <ToDoListPage />
