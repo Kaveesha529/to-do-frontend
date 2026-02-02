@@ -1,5 +1,6 @@
 import { Button } from "../ui/button";
 import { useHandleLogout } from "@/hooks/useHandleLogout";
+import ConfirmDialog from "./ConfirmDialog";
 
 export default function Header() {
 
@@ -8,11 +9,16 @@ export default function Header() {
     return (
         <div className="flex w-full h-20 z-50 bg-green-300 fixed top-0 justify-end">
             <div className="flex h-full w-[10%] items-center justify-center">
-                <Button
+                <ConfirmDialog
+                    title="Confirm Logout"
+                    buttonName="Confirm"
                     onClick={handleLogout}
-                >
-                    Logout
-                </Button>
+                    trigger={
+                        <Button>
+                            Logout
+                        </Button>
+                    }
+                />
             </div>
         </div>
     )
