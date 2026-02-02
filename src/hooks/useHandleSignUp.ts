@@ -9,7 +9,10 @@ export function useHandleSignUp() {
     const [success, setSuccess] = useState<boolean>(false)
     const [validPassword, setValidPassword] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
+    const [emailError, setEmailError] = useState<string | null>(null)
+    const [passwordError, setPasswordError] = useState<string | null>(null)
 
+    const typing = password.length > 0
     const hasSixCharacters = password.length > 5
     const hasCapital = /[A-Z]/.test(password)
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
@@ -20,20 +23,24 @@ export function useHandleSignUp() {
     }, [password])
 
     const passwordValidate = () => {
-        if (!hasSixCharacters) {
-            toast.warning("Password should minimum 6 characters")
+        if (!typing) {
+            setPasswordError(null)
+            setValidPassword(false)
+        } else if (!hasSixCharacters) {
+            setPasswordError("Password should minimum 6 characters")
             setValidPassword(false)
         } else if (!hasCapital) {
-            toast.warning("Password should contain atleast one capital letter")
+            setPasswordError("Password should contain atleast one capital letter")
             setValidPassword(false)
         } else if (!hasSpecialChar) {
-            toast.warning("password should contain atleast one special character")
+            setPasswordError("password should contain atleast one special character")
             setValidPassword(false)
         } else if (!hasNumber) {
-            toast.warning("password should contain atleast one number")
+            setPasswordError("password should contain atleast one number")
             setValidPassword(false)
         } else {
             setValidPassword(true)
+            setPasswordError(null)
         }
     }
 
@@ -74,6 +81,7 @@ export function useHandleSignUp() {
         setPassword,
         handleSubmit,
         validPassword,
-        loading
+        loading,
+        passwordError
     }
 }

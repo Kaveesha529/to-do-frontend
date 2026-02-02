@@ -6,11 +6,12 @@ import { Label } from "../ui/label";
 import { HiEye, HiEyeOff } from "react-icons/hi"
 import { useHandleSignUp } from "@/hooks/useHandleSignUp";
 import { useEffect } from "react";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 export default function SignUpCard() {
 
     const { setIsLogin } = useLoginCtx()
-    const { show, setShow, email, setEmail, password, setPassword, success, setSuccess, handleSubmit, validPassword, loading } = useHandleSignUp()
+    const { show, setShow, email, setEmail, password, setPassword, success, setSuccess, handleSubmit, validPassword, loading, passwordError } = useHandleSignUp()
 
     useEffect(() => {
         if (success) {
@@ -40,6 +41,10 @@ export default function SignUpCard() {
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
+                            <div className="flex flex-row items-center gap-2 text-red-500">
+                                <AiOutlineExclamationCircle />
+                                <span></span>
+                            </div>
                             <Input
                                 type="email"
                                 id="email"
@@ -51,6 +56,12 @@ export default function SignUpCard() {
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
+                            {passwordError && (
+                                <div className="flex flex-row items-center gap-2 text-red-500">
+                                    <AiOutlineExclamationCircle />
+                                    <span>{passwordError}</span>
+                                </div>
+                            )}
                             <div className="flex flex-row relative items-center">
                                 <Input
                                     className="pr-10"
