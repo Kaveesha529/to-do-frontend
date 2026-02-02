@@ -7,6 +7,7 @@ import { useToDo } from "@/contexts/ToDoContext"
 import DeleteDialog from "./DeleteDialog"
 import EmptyTasksCard from "./EmptyTasksCard"
 import TasksCard from "./TasksCard"
+import ToolTipCard from "./ToolTipCard"
 
 export default function TasksDisplay() {
 
@@ -18,45 +19,73 @@ export default function TasksDisplay() {
                 <CardHeader>
                     <CardTitle>
                         <div className="flex flex-row gap-2 items-center">
-                            <Button
-                                variant={"outline"}
-                                className="rounded-full w-8 h-8 items-center justify-center"
-                                onClick={() => {
-                                    const currentDate = new Date(toDo.date)
-                                    currentDate.setDate(currentDate.getDate() - 1)
-                                    toDo.handleDate(currentDate.toISOString().split("T")[0])
-                                }}
-                            >
-                                <FaArrowLeft />
-                            </Button>
+                            <ToolTipCard
+                                description="Previous day"
+                                trigger={
+                                    <Button
+                                        variant={"outline"}
+                                        className="rounded-full w-8 h-8 items-center justify-center"
+                                        onClick={() => {
+                                            const currentDate = new Date(toDo.date)
+                                            currentDate.setDate(currentDate.getDate() - 1)
+                                            toDo.handleDate(currentDate.toISOString().split("T")[0])
+                                        }}
+                                    >
+                                        <FaArrowLeft />
+                                    </Button>
+                                }
+                            />
+
                             {toDo.date}
-                            <Button
-                                variant={"outline"}
-                                className="rounded-full w-8 h-8 items-center justify-center"
-                                onClick={() => {
-                                    const currentDate = new Date(toDo.date)
-                                    currentDate.setDate(currentDate.getDate() + 1)
-                                    toDo.handleDate(currentDate.toISOString().split("T")[0])
-                                }}
-                            >
-                                <FaArrowRight />
-                            </Button>
+
+                            <ToolTipCard
+                                description="Next day"
+                                trigger={
+                                    <Button
+                                        variant={"outline"}
+                                        className="rounded-full w-8 h-8 items-center justify-center"
+                                        onClick={() => {
+                                            const currentDate = new Date(toDo.date)
+                                            currentDate.setDate(currentDate.getDate() + 1)
+                                            toDo.handleDate(currentDate.toISOString().split("T")[0])
+                                        }}
+                                    >
+                                        <FaArrowRight />
+                                    </Button>
+                                }
+                            />
                         </div>
                     </CardTitle>
                     <div className="flex flex-row gap-2">
                         <CardAction>
-                            <Button variant={"ghost"} onClick={toDo.handleRefresh} className="rounded-full w-10 h-10 items-center justify-center"><FaSyncAlt /></Button>
+                            <ToolTipCard
+                                description="Refresh tasks"
+                                trigger={
+                                    <Button
+                                        variant={"ghost"}
+                                        onClick={toDo.handleRefresh}
+                                        className="rounded-full w-10 h-10 items-center justify-center"
+                                    >
+                                        <FaSyncAlt />
+                                    </Button>
+                                }
+                            />
                         </CardAction>
                         <CardAction>
-                            <Input
-                                id="date"
-                                type="date"
-                                value={toDo.date}
-                                onChange={(e) => {
-                                    toDo.handleDate(e.target.value)
-                                    toDo.handleTasks([])
-                                    toDo.handleErrorMessage(null)
-                                }}
+                            <ToolTipCard
+                                description="Pick a date"
+                                trigger={
+                                    <Input
+                                        id="date"
+                                        type="date"
+                                        value={toDo.date}
+                                        onChange={(e) => {
+                                            toDo.handleDate(e.target.value)
+                                            toDo.handleTasks([])
+                                            toDo.handleErrorMessage(null)
+                                        }}
+                                    />
+                                }
                             />
                         </CardAction>
                     </div>

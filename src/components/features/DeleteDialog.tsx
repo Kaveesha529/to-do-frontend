@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useToDo } from "@/contexts/ToDoContext";
 import { FaTrash } from "react-icons/fa";
 import ConfirmDialog from "./ConfirmDialog";
+import ToolTipCard from "./ToolTipCard";
 
 export default function DeleteDialog() {
 
@@ -14,9 +15,14 @@ export default function DeleteDialog() {
             buttonName="Delete list"
             onClick={toDo.handleDeleteList}
             trigger={
-                <Button variant={"secondary"} className="rounded-full w-10 h-10 items-center justify-center">
-                    <FaTrash />
-                </Button>
+                <ToolTipCard
+                    description="Delete list"
+                    trigger={
+                        <Button variant={"secondary"} className="rounded-full w-10 h-10 items-center justify-center">
+                            <FaTrash />
+                        </Button>
+                    }
+                />
             }
         />
     )
