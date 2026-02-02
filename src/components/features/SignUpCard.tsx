@@ -57,24 +57,26 @@ export default function SignUpCard() {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                                 <div className="absolute right-2 items-center justify-center">
-                                    {show ? (
-                                        <Button
-                                            type="button"
-                                            className="rounded-full h-8 w-8"
-                                            variant={"ghost"}
-                                            onClick={() => setShow(false)}
-                                        >
-                                            <HiEye />
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            type="button"
-                                            className="rounded-full h-8 w-8"
-                                            variant={"ghost"}
-                                            onClick={() => setShow(true)}
-                                        >
-                                            <HiEyeOff />
-                                        </Button>
+                                    {(password.length > 0) && (
+                                        show ? (
+                                            <Button
+                                                type="button"
+                                                className="rounded-full h-8 w-8"
+                                                variant={"ghost"}
+                                                onClick={() => setShow(false)}
+                                            >
+                                                <HiEye />
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                className="rounded-full h-8 w-8"
+                                                variant={"ghost"}
+                                                onClick={() => setShow(true)}
+                                            >
+                                                <HiEyeOff />
+                                            </Button>
+                                        )
                                     )}
                                 </div>
                             </div>

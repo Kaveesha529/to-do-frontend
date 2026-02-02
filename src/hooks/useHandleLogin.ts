@@ -15,10 +15,10 @@ export function useHandleLogin() {
         try {
             const data = await login(email, password)
             const message = data.message
-            localStorage.setItem("token", data.token)
             console.log("message: ", message)
             if (message === "Login successfull") {
-                navigate("/")
+                localStorage.setItem("token", data.token)
+                navigate("/todo")
                 setEmail("")
                 setPassword("")
             } else if (message === "Invalid credentials") {

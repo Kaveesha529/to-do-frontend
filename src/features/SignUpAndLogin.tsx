@@ -1,5 +1,5 @@
 import LoginCard from "@/components/features/LoginCard";
-import SignUpCard from "@/components/features/SignupCard";
+import SignUpCard from "@/components/features/SignUpCard";
 import { useLoginCtx } from "@/contexts/LoginContext";
 
 export default function signUpSignUpAndLogin() {
