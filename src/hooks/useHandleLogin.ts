@@ -10,7 +10,6 @@ export function useHandleLogin() {
     const [validPassword, setValidPassword] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [emailError, setEmailError] = useState<string | null>(null)
-    const [passwordError, setPasswordError] = useState<string | null>(null)
     const [validEmail, setValidEmail] = useState<boolean>(false)
 
     const passwordTyping = password.length > 0
@@ -89,7 +88,6 @@ export function useHandleLogin() {
         handleSubmit,
         validPassword,
         loading,
-        passwordError,
         emailError,
         validEmail
     }

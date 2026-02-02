@@ -20,7 +20,6 @@ export default function LoginCard() {
         handleSubmit,
         validPassword,
         loading,
-        passwordError,
         emailError,
         validEmail
     } = useHandleLogin()
@@ -61,12 +60,6 @@ export default function LoginCard() {
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
-                            {passwordError && (
-                                <div className="flex flex-row items-center gap-2 text-red-500">
-                                    <AiOutlineExclamationCircle />
-                                    <span>{passwordError}</span>
-                                </div>
-                            )}
                             <div className="flex flex-row relative items-center">
                                 <Input
                                     className="pr-10"
