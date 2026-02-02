@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label"
 import { useToDo } from "@/contexts/ToDoContext"
 import type { Task } from "@/types/ToDo"
 import { FaEdit } from "react-icons/fa"
+import ToolTipCard from "./ToolTipCard"
 
 interface EditProps {
     task: Task
@@ -27,11 +28,16 @@ export default function EditDialog({ task }: EditProps) {
         <Dialog>
             <form>
                 <DialogTrigger asChild>
-                    <Button className="rounded-full w-10 h-10 items-center justify-center"
-                        variant={"secondary"}
-                        onClick={() => toDo.handleInitialEditTaskName(task.name)}>
-                        <FaEdit />
-                    </Button>
+                    <ToolTipCard
+                        description="Edit task"
+                        trigger={
+                            <Button className="rounded-full w-10 h-10 items-center justify-center"
+                                variant={"secondary"}
+                                onClick={() => toDo.handleInitialEditTaskName(task.name)}>
+                                <FaEdit />
+                            </Button>
+                        }
+                    />
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

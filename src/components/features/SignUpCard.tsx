@@ -5,11 +5,35 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { HiEye, HiEyeOff } from "react-icons/hi"
 import { useHandleSignUp } from "@/hooks/useHandleSignUp";
+import { useEffect } from "react";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 export default function SignUpCard() {
 
     const { setIsLogin } = useLoginCtx()
-    const { show, setShow, email, setEmail, password, setPassword, success, setSuccess, handleSubmit } = useHandleSignUp()
+    const {
+        show,
+        setShow,
+        email,
+        setEmail,
+        password,
+        setPassword,
+        success,
+        setSuccess,
+        handleSubmit,
+        validPassword,
+        loading,
+        passwordError,
+        emailError,
+        validEmail
+    } = useHandleSignUp()
+
+    useEffect(() => {
+        if (success) {
+            setIsLogin(true)
+            setSuccess(false)
+        }
+    }, [success])
 
     return (
         <Card className="w-full">
@@ -28,14 +52,16 @@ export default function SignUpCard() {
             <CardContent>
                 <form id="signUpForm" onSubmit={(e) => {
                     handleSubmit(e)
-                    if (success) {
-                        setIsLogin(true)
-                        setSuccess(false)
-                    }
                 }}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
+                            {emailError && (
+                                <div className="flex flex-row items-center gap-2 text-red-500">
+                                    <AiOutlineExclamationCircle />
+                                    <span>{emailError}</span>
+                                </div>
+                            )}
                             <Input
                                 type="email"
                                 id="email"
@@ -47,6 +73,12 @@ export default function SignUpCard() {
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
+                            {passwordError && (
+                                <div className="flex flex-row items-center gap-2 text-red-500">
+                                    <AiOutlineExclamationCircle />
+                                    <span>{passwordError}</span>
+                                </div>
+                            )}
                             <div className="flex flex-row relative items-center">
                                 <Input
                                     className="pr-10"
@@ -57,24 +89,26 @@ export default function SignUpCard() {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                                 <div className="absolute right-2 items-center justify-center">
-                                    {show ? (
-                                        <Button
-                                            type="button"
-                                            className="rounded-full h-8 w-8"
-                                            variant={"ghost"}
-                                            onClick={() => setShow(false)}
-                                        >
-                                            <HiEye />
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            type="button"
-                                            className="rounded-full h-8 w-8"
-                                            variant={"ghost"}
-                                            onClick={() => setShow(true)}
-                                        >
-                                            <HiEyeOff />
-                                        </Button>
+                                    {(password.length > 0) && (
+                                        show ? (
+                                            <Button
+                                                type="button"
+                                                className="rounded-full h-8 w-8"
+                                                variant={"ghost"}
+                                                onClick={() => setShow(false)}
+                                            >
+                                                <HiEye />
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                className="rounded-full h-8 w-8"
+                                                variant={"ghost"}
+                                                onClick={() => setShow(true)}
+                                            >
+                                                <HiEyeOff />
+                                            </Button>
+                                        )
                                     )}
                                 </div>
                             </div>
@@ -88,6 +122,7 @@ export default function SignUpCard() {
                         type="submit"
                         form="signUpForm"
                         className="w-full"
+                        disabled={!validPassword || !validEmail || loading}
                     >
                         Sign up
                     </Button>
