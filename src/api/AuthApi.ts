@@ -21,3 +21,8 @@ export const login = async (
     })
     return data
 }
+
+export const logout = async () => {
+    const { data } = await api.post('/logout')
+    return data
+}
