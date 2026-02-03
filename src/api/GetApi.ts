@@ -4,7 +4,8 @@ const api = axios.create({
     baseURL: "http://localhost:3000/api/todo-list/",
     headers: {
         "Content-Type": "application/json"
-    }
+    },
+    withCredentials: true
 })
 
 api.interceptors.request.use(

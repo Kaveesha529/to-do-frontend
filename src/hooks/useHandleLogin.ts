@@ -62,7 +62,6 @@ export function useHandleLogin() {
             const message = data.message
             console.log("message: ", message)
             if (message === "Login successfull") {
-                localStorage.setItem("token", data.token)
                 navigate("/todo")
                 setEmail("")
                 setPassword("")
